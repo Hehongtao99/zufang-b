@@ -1,0 +1,133 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://115.120.221.163:3306/zufang_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false&connectTimeout=10000&socketTimeout=30000
+    username: root
+    password: hht500234
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+      enabled: true
+      location: ${java.io.tmpdir}
+  mvc:
+    throw-exception-if-no-handler-found: false
+    static-path-pattern: /**
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  web:
+    resources:
+      add-mappings: true
+      static-locations: 
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/META-INF/resources/
+        - file:${user.dir}/uploads/
+  # 跨域配置
+  webmvc:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+  # Redis配置
+  data:
+    redis:
+      host: 115.120.221.163
+      port: 6379
+      password: 123456
+      database: 0
+      timeout: 10000
+      connect-timeout: 10000
+      client-type: lettuce
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+        shutdown-timeout: 100ms
+      # SSL配置
+      ssl:
+        enabled: false
+      # 关闭命令超时重试
+      command-timeout: 10000
+      # 关闭连接失败重试
+      retry-on-failure: false
+    # 配置文件路径
+    config: classpath:redis.conf
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zufang.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# MinIO配置
+minio:
+  enabled: true
+  endpoint: http://113.45.161.48:9000
+  access-key: hht5002342003
+  secret-key: hht5002342003
+  bucket: zufang
+  # 映射外部访问URL，如果Minio有域名或IP+端口，可以直接配置
+  external-endpoint: http://113.45.161.48:9000
+
+# 文件上传配置
+file:
+  upload-dir: uploads
+  prefix-url: http://localhost:8080/api/file/download/
+
+# JWT配置
+jwt:
+  header: Authorization
+  tokenPrefix: Bearer
+  secret: youNeedToChangeThisSecretKeyForSecurityButMakeSureItIsLongEnough
+  expiration: 86400000  # 1天 = 24 * 60 * 60 * 1000 毫秒
+
+# 日志配置
+logging:
+  level:
+    com.zufang: info
+    org.springframework.web: info
+    org.mybatis: info
+    
+# 租房系统配置
+zufang:
+  admin:
+    username: admin
+    password: admin123
+    init-enabled: true  # 是否初始化管理员账号
+    
+  # 房源功能配置
+  house:
+    image-min-count: 1
+    image-max-count: 10
+    approval-required: true  # 是否需要管理员审核房源
+    
+  # 支付配置
+  payment:
+    mock-enabled: true  # 是否启用模拟支付 
